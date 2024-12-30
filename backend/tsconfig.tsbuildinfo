@@ -1,1 +1,1 @@
-{"root":["./src/index.ts"],"version":"5.6.3"}
+{"root":["./src/index.ts","./src/lib/llm/groq.ts","./src/lib/llm/openrouter.ts","./src/lib/llm/promts.ts","./src/routes/chat.route.ts","./src/routes/template.route.ts","./src/utils/constants.ts","./src/utils/stripindents.ts","./src/utils/defaults/node.ts","./src/utils/defaults/react.ts"],"version":"5.6.3"}
