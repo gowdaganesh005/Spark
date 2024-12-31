@@ -7,7 +7,9 @@ require("dotenv").config();
 const express_1 = __importDefault(require("express"));
 const template_route_1 = require("./routes/template.route");
 const chat_route_1 = require("./routes/chat.route");
+const cors_1 = __importDefault(require("cors"));
 const app = (0, express_1.default)();
+app.use((0, cors_1.default)());
 app.use(express_1.default.json());
 // export async function main() {
 //   const chatCompletion = await getGroqChatCompletion();

@@ -119,6 +119,10 @@
 }
 
 .background{
-  @apply bg-gradient-to-b from-slate-800  to-60% via-10% via-slate-900 to-black
+  @apply bg-[#0A0A0A]
+}
+
+.textarea-border{
+  @apply bg-gradient-to-br from-sky-500 to-30% to-zinc-800 
 }
 

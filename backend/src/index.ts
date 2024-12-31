@@ -6,9 +6,12 @@ import { basePrompt as nodeBaseprompt } from "./utils/defaults/node";
 import express from "express"
 import {router as templateRouter} from "./routes/template.route"
 import {router as chatRouter } from "./routes/chat.route"
+import cors from "cors"
 
 const app=express()
+app.use(cors())
 app.use(express.json())
+
 
 // export async function main() {
 //   const chatCompletion = await getGroqChatCompletion();

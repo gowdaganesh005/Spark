@@ -1,7 +1,9 @@
 
+import { Outlet } from 'react-router-dom'
 import './App.css'
 import { Background } from './components/pages/Background'
-import { LandingPage } from './components/pages/LandingPage'
+
+import Header from './components/ui/Header'
 
 function App() {
   
@@ -9,7 +11,8 @@ function App() {
   return (
     <>
     <Background>
-      <LandingPage/>
+      <Header/>
+      <Outlet/>
     </Background>
     </>
   )
