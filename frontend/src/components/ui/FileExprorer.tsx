@@ -1,19 +1,20 @@
 import { FileStrutureType } from "@/lib/fieExplorerParser";
 import { useState } from "react";
 
-export default function FileExplorer({fileStructureObject}:{fileStructureObject:FileStrutureType}){
+export default function FileExplorer({fileStructureObject,fileClick}:{fileStructureObject:FileStrutureType,fileClick:React.MouseEventHandler<HTMLDivElement>}){
+    
     const [open,setOpen]=useState(false)
     
     return(
         <>
         
-        <div className="h-full py-1 max-w-60 bg-gray-900 min-w-10 text-gray-300 ">
+        <div className="h-full py-1 max-w-60  min-w-10 text-gray-300  ">
             <div 
                 onClick={()=>setOpen(prev=>!prev)}
-                className=" w-full cursor-default select-none ">{
+                className=" w-full cursor-default select-none">{
                 fileStructureObject.type=="folder"?
-                (<div className="font-semibold flex"><img src="/folderClosed.svg" className="w-5 mx-1" alt="" /> {fileStructureObject.name}</div>)
-                :(<div className="flex"><img src="/file.png" className="w-5 mx-1" alt="" />{fileStructureObject.name}</div>)
+                (<div className="font-semibold flex  "><img src="/folderClosed.svg" className="w-5 min-w-5 mx-1" alt="" />  <div className="overflow-hidden">{fileStructureObject.name}</div></div>)
+                :(<div onClick={(e)=>fileClick(e)} className="flex "><img src="/file.png" className="h-6  w-5 mx-1" alt="" /><div className="overflow-hidden whitespace-nowrap">{fileStructureObject.name}</div></div>)
             
             }
             
@@ -24,7 +25,7 @@ export default function FileExplorer({fileStructureObject}:{fileStructureObject:
                 {   
                     fileStructureObject.children && 
                     <div>
-                        {fileStructureObject.children.map((child)=><FileExplorer fileStructureObject={child}/>)}
+                        {fileStructureObject.children.map((child)=><FileExplorer fileStructureObject={child} fileClick={fileClick}/>)}
                     </div>
                 }
             </div>}

@@ -12,6 +12,9 @@ import { Step } from "@/types"
 import { useLocation } from "react-router-dom"
 import fileExplorerParser from "@/lib/fieExplorerParser"
 import FileExplorer from "../ui/FileExprorer"
+import {  Editor } from "@monaco-editor/react"
+import MonacoEdiotor from "../ui/MonacoEditor"
+import MonacoEditor from "../ui/MonacoEditor"
   
 
 export default function Chat(){
@@ -23,8 +26,11 @@ export default function Chat(){
 
 
     const location =useLocation()
+
     const { prompt }=location.state as { prompt: string }
     const [steps,setSteps]=useState<Step[]>(stepParser(ui[0]))
+    const [codeEditor,setCodeEditor]=useState("")
+    const [curFile,setcurFile]=useState("")
     const fetch=async (prompt:string)=>{
         const res:any=await axios.post(`${BACKEND_URL}/api/template`,{prompt})
         const {prompts,uiPrompts}=res.data
@@ -33,6 +39,15 @@ export default function Chat(){
         
         
     }  
+    console.log(steps)
+    const fileClick=(e:any)=>{
+      console.log("fileclick ",e)
+      const step=steps.find((step)=>step.path?.split("/").pop()==e.target.innerHTML)
+      const filename=step?.path?.split("/").pop()
+      const code =step?.code || ""
+      setcurFile(filename || "")
+      setCodeEditor(code)
+    }
     console.log(steps)  
     useEffect(()=>{
         fetch(prompt)
@@ -42,26 +57,29 @@ export default function Chat(){
     return(
         <>
         
-        <div className="w-full h-screen my-10   border-white   ">
-          <div className="w-full h-full flex">
-            <div className="col-span-2 min-w-44 max-w-60  px-2  ">
+        <div className="w-full  my-10 h-[90%]   border-white   ">
+          <div className="w-full h-[95%] flex">
+            <div className=" min-w-44 h-full w-80 max-w-96  px-2 ">
               <RenderSteps steps={steps}/>
             </div>
-            <div className="w-full h-full min-w-32 col-span-4">
+            <div className="w-full h-full  flex justify-center  ">
             <ResizablePanelGroup 
-            className="bg-gray-600 border  "
+            className="bg-gray-600 border md:max-w-screen-lg w-[80%] "
                 direction="horizontal">
               <ResizablePanel
                 defaultSize={15}
-                maxSize={17}
-                className="max-w-30">
+                maxSize={25}
+                className="bg-slate-950 min-w-20 max-w-72">
                     
-                    <FileExplorer fileStructureObject={fso}/>
+                    <FileExplorer fileStructureObject={fso} fileClick={fileClick}/>
               </ResizablePanel>
               <ResizableHandle  />
               <ResizablePanel
+              
               >
-                Two
+                <div className="bg-gray-200"> fileName</div>
+                <MonacoEditor value={codeEditor} filename={curFile}/>
+                
               </ResizablePanel>
             </ResizablePanelGroup>
             </div>
