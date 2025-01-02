@@ -1,7 +1,7 @@
-import { FileStrutureType } from "@/lib/fieExplorerParser";
+import { FileStructureType } from "@/lib/fieExplorerParser";
 import { useState } from "react";
 
-export default function FileExplorer({fileStructureObject,fileClick}:{fileStructureObject:FileStrutureType,fileClick:React.MouseEventHandler<HTMLDivElement>}){
+export default function FileExplorer({fileStructureObject,fileClick}:{fileStructureObject:FileStructureType,fileClick:React.MouseEventHandler<HTMLDivElement>}){
     
     const [open,setOpen]=useState(false)
     
@@ -14,7 +14,7 @@ export default function FileExplorer({fileStructureObject,fileClick}:{fileStruct
                 className=" w-full cursor-default select-none">{
                 fileStructureObject.type=="folder"?
                 (<div className="font-semibold flex  "><img src="/folderClosed.svg" className="w-5 min-w-5 mx-1" alt="" />  <div className="overflow-hidden">{fileStructureObject.name}</div></div>)
-                :(<div onClick={(e)=>fileClick(e)} className="flex "><img src="/file.png" className="h-6  w-5 mx-1" alt="" /><div className="overflow-hidden whitespace-nowrap">{fileStructureObject.name}</div></div>)
+                :(<div onClick={(e)=>fileClick(e)} key={fileStructureObject.path} className="flex "><img src="/file.png" className="h-6  w-5 mx-1" alt="" /><div className="overflow-hidden whitespace-nowrap">{fileStructureObject.name}</div></div>)
             
             }
             
@@ -25,7 +25,7 @@ export default function FileExplorer({fileStructureObject,fileClick}:{fileStruct
                 {   
                     fileStructureObject.children && 
                     <div>
-                        {fileStructureObject.children.map((child)=><FileExplorer fileStructureObject={child} fileClick={fileClick}/>)}
+                        {fileStructureObject.children.map((child:any)=><FileExplorer fileStructureObject={child} fileClick={fileClick}/>)}
                     </div>
                 }
             </div>}

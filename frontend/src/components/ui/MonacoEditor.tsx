@@ -40,10 +40,13 @@ const MonacoEditor: React.FC<MonacoEditorProps> = ({ value, filename }) => {
     useEffect(() => {
         if (containerRef.current) {
             const editor = monaco.editor.create(containerRef.current, {
+                
                 value: value, // Set initial value
                 language: getLanguageFromFilename(filename), // Dynamically set language
                 theme: 'vs-dark', // Dark theme
                 automaticLayout: true, // Ensure proper layout adjustment
+                
+                
             });
 
             // Enable JSX for TSX files
@@ -63,7 +66,7 @@ const MonacoEditor: React.FC<MonacoEditorProps> = ({ value, filename }) => {
         };
     }, [value, filename]);
 
-    return <div ref={containerRef} style={{ height: "500px" }} />;
+    return <div ref={containerRef} style={{ height: "100%" }} />;
 };
 
 export default MonacoEditor;

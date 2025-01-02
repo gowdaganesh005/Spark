@@ -1,25 +1,26 @@
 import { Step, StepType } from "@/types";
 
-export interface FileStrutureType{
+export interface FileStructureType{
     type:"folder" | "file",
     name:string
     code?:string
-    children?:FileStrutureType[]
+    children?:FileStructureType[]
+    path:string
 }
 
-export default function fileExplorerParser(steps:Step[]){
-    let FileStruture:FileStrutureType;
-    FileStruture={
-        type:"folder",
-        name:"Project",
-        children:[]
-        
-    }
+// interface fileParserProps{
+//     FileStructure:FileStructureType,
+//     steps:Step[]
+// }
+
+export default function fileExplorerParser(FileStructure:FileStructureType,steps:Step[]){
+    let FileStruture:FileStructureType;
+    FileStruture=FileStructure
     function resolvePath(path:string){
         
         const parts:string[] =path.split('/');
         let current=FileStruture
-        if(path=="/"){
+        if(path==="/"){
             return current
         }
         for(const part of parts){
@@ -29,7 +30,7 @@ export default function fileExplorerParser(steps:Step[]){
             }
             let next=current.children.find((child)=>child.name==part && child.type=="folder")
             if(!next){
-                next={type:"folder",name:part,children:[]}
+                next={type:"folder",name:part,path:path,children:[]}
                 current.children.push(next)
             }
             current=next
@@ -39,6 +40,7 @@ export default function fileExplorerParser(steps:Step[]){
     }
 
     for(const step of steps){
+        if(step.status=="pending"){
         if(step.type===StepType.CreateFolder){
             if(step.path){
                 resolvePath(step.path)
@@ -54,18 +56,24 @@ export default function fileExplorerParser(steps:Step[]){
             }
             const exists=current?.children?.find(child=>(child.name==fileName && child.type=="file"))
             if(exists){
-                exists.code=step.code
+                if(exists.code !== step.code){
+                    console.log("file exxists",exists.name)
+                    exists.code=step.code
+                }
+                
             }
             else{
                 if(fileName){
-                    current?.children?.push({type:"file",code:step.code,name:fileName})
+                    current?.children?.push({type:"file",code:step.code,path:step.path || "",name:fileName})
                 }
             }
         }
+        step.status = "completed";
+    } 
         
     }
 
-    function sortChildren(children:FileStrutureType[]){
+    function sortChildren(children:FileStructureType[]){
         children.sort((a,b)=>{
             if(a.type===b.type){
                 return a.name.localeCompare(b.name)
