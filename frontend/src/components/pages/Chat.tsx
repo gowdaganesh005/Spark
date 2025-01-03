@@ -10,10 +10,13 @@ import { BACKEND_URL } from "@/constants"
 import { stepParser } from "@/lib/stepParser"
 import { Step } from "@/types"
 import { useLocation } from "react-router-dom"
-import fileExplorerParser, { FileStructureType } from "@/lib/fieExplorerParser"
+import { fileExplorerParser,  FileParserhelper,  FileStructureType } from "@/lib/fieExplorerParser"
 import FileExplorer from "../ui/FileExprorer"
 
 import MonacoEditor from "../ui/MonacoEditor"
+import { useWebContainer } from "@/hooks/webContainer"
+import { globSync } from "fs"
+import CodePreviewTabs from "../ui/CodePreviewTabs"
   
 
 export default function Chat(){
@@ -27,7 +30,9 @@ export default function Chat(){
     //monaco editor values
     const [codeEditor,setCodeEditor]=useState("")
     const [curFile,setcurFile]=useState("")
-    const [sysprompts,setSysprompts]=useState("")
+    const [url,setUrl]=useState<string>()
+    const [run,setRun]=useState(false)
+    
 
     const RootFolder:FileStructureType={
       type:"folder",
@@ -98,11 +103,11 @@ export default function Chat(){
       filestructure: FileStructureType,
       filename: string
   ): FileStructureType | undefined => {
-      console.log("Checking path:", filestructure.path); // Debug log
+      // console.log("Checking path:", filestructure.path); // Debug log
   
       // Check if the current file matches
       if (filestructure.type === "file" && filestructure.path.split("/").pop() === filename) {
-          console.log("Found file:", filestructure.path); // Debug log
+          // console.log("Found file:", filestructure.path); // Debug log
           return filestructure;
       }
   
@@ -117,8 +122,8 @@ export default function Chat(){
       return undefined; // Return undefined if not found
   };
     const fileClick=(e:any)=>{
-      console.log("fileclick ",e)
-      console.log(e.target.innerHTML)
+      // console.log("fileclick ",e)
+      // console.log(e.target.innerHTML)
       const file=findfile(globalFolderStructure,e.target.innerHTML)
       setCodeEditor(file?.code || "")
       setcurFile(file?.name || "")
@@ -134,6 +139,55 @@ export default function Chat(){
         
     },[])
     
+    const file:any={};
+    
+  
+    const webContainer=useWebContainer()
+    // console.log(FileParserhelper(globalFolderStructure,file))
+    
+    useEffect(()=>{
+      const webconFiles=FileParserhelper(globalFolderStructure,file)
+      console.log(webconFiles)
+      webContainer?.mount(webconFiles)
+
+    },[globalFolderStructure,webContainer])
+
+    async function installDependencies(){
+      
+      
+      const installProcess = await webContainer?.spawn('npm',['install'],{cwd:'Project'});
+      // const installProcess2=await webContainer?.spawn('ls')
+      
+
+      installProcess?.output.pipeTo(new WritableStream({
+        write(data) {
+          console.log(data);
+        }
+      }));
+      // installProcess2?.output.pipeTo(new WritableStream({
+      //   write(data) {
+      //     console.log(data);
+      //   }
+      // }));
+      const runprocess=await webContainer?.spawn('npm', ['run', 'dev'],{cwd:'Project'});
+      runprocess?.output.pipeTo(new WritableStream({
+        write(data) {
+          console.log(data);
+        }
+      }));
+
+        // Wait for `server-ready` event
+        
+    }
+
+    useEffect(()=>{
+      installDependencies()
+      setRun(prev=>!prev)
+    },[webContainer,globalFolderStructure])
+
+    
+    
+
 
     
 
@@ -164,8 +218,10 @@ export default function Chat(){
               <ResizablePanel
               
               >
-                <div className="bg-gray-200"> fileName</div>
-                <MonacoEditor key={curFile} value={codeEditor} filename={curFile}/>
+                {/* <div className="bg-gray-200"> fileName</div>
+                <MonacoEditor key={curFile} value={codeEditor} filename={curFile}/> */}
+                <CodePreviewTabs curFile={curFile} codeEditor={codeEditor} webContainer={webContainer}/>
+                
                 
               </ResizablePanel>
             </ResizablePanelGroup>

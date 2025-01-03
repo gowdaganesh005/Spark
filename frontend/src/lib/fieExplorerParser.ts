@@ -13,7 +13,7 @@ export interface FileStructureType{
 //     steps:Step[]
 // }
 
-export default function fileExplorerParser(FileStructure:FileStructureType,steps:Step[]){
+export  function fileExplorerParser(FileStructure:FileStructureType,steps:Step[]){
     let FileStruture:FileStructureType;
     FileStruture=FileStructure
     function resolvePath(path:string){
@@ -92,4 +92,41 @@ export default function fileExplorerParser(FileStructure:FileStructureType,steps
 
     return FileStruture
 
+}
+
+
+
+export function FileParserhelper(folderStructure:FileStructureType,file:any){
+    if(folderStructure.type=='file'){
+        const filename=folderStructure.name
+        const contents=folderStructure.code
+        const obj={
+            [`${filename}`]:{
+                file:{
+                    contents:`${contents}`
+
+                }
+            }
+        }
+        console.log(obj)
+        file={...file,...obj}
+    }else if(folderStructure.type=='folder'){
+        const foldername=folderStructure.name
+        let children:any={};
+        if(folderStructure.children){
+            for(const child of folderStructure.children){
+                children={...children,...FileParserhelper(child,{})}
+            }
+        }
+
+        
+        const obj={
+            [foldername]:{
+                directory:children
+            }
+        }
+        file={...file,...obj}
+    }
+    console.log(file)
+    return file
 }

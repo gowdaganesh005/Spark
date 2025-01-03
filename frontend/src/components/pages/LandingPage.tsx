@@ -10,6 +10,7 @@ export function LandingPage(){
         navigate("/create",{state:{prompt}})
 
     }
+    
    
     return(
         <>
