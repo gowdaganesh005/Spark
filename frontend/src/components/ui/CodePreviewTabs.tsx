@@ -2,27 +2,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import MonacoEditor from "./MonacoEditor"
 import { useEffect, useState } from "react";
 import { Button } from "./button";
+import IframePreview from "./IframePreview";
+import { WebContainer } from "@webcontainer/api";
 
-export default function CodePreviewTabs({curFile,codeEditor,webContainer}:any){
-  const [url,setUrl]=useState<string>()
+export default function CodePreviewTabs({curFile,codeEditor,globalFolderStructure,webContainer}:any){
+  
   const [reload,setReload]=useState(false)
-  useEffect(()=>{
-    // async function run(){
-    //   const runprocess=await webContainer?.spawn('npm', ['run', 'dev'],{cwd:'Project'});
-    //   runprocess?.output.pipeTo(new WritableStream({
-    //     write(data) {
-    //       console.log(data);
-    //     }
-    //   }));
-    // }
-    // run()
-    
-    webContainer?.on('server-ready', (port:any, url:any) => {
-      console.log(" url ",url," port ",port)
-      setUrl(url)
-    });
-  },[reload])
-    console.log(url)
+  
     return(
         <Tabs defaultValue="account" className=" dark w-full h-screen">
           <TabsList>
@@ -36,17 +22,8 @@ export default function CodePreviewTabs({curFile,codeEditor,webContainer}:any){
             </div>
           </TabsContent>
           <TabsContent value="password">
-            <div className="w-full h-screen">
-              <Button onClick={()=>setReload(prev=>!prev)} className="dark ">Reload</Button>
-                {url?<iframe className="w-full min-h-full pb-44" src={url} />
-                    :<div className="w-full h-full text-center flex flex-col justify-center bg-slate-800 pb-44 font-bold text-xl text-gray-200"> 
-                    Preview your code here 
-                    </div>
-
-                }
-                
-            </div>
-        </TabsContent>
+            <IframePreview globalFolderStructure={globalFolderStructure} webContainer={webContainer} />
+          </TabsContent>
         </Tabs>
 
     )

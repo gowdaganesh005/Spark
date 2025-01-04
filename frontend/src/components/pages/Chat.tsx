@@ -13,9 +13,9 @@ import { useLocation } from "react-router-dom"
 import { fileExplorerParser,  FileParserhelper,  FileStructureType } from "@/lib/fieExplorerParser"
 import FileExplorer from "../ui/FileExprorer"
 
-import MonacoEditor from "../ui/MonacoEditor"
+
 import { useWebContainer } from "@/hooks/webContainer"
-import { globSync } from "fs"
+
 import CodePreviewTabs from "../ui/CodePreviewTabs"
   
 
@@ -30,8 +30,8 @@ export default function Chat(){
     //monaco editor values
     const [codeEditor,setCodeEditor]=useState("")
     const [curFile,setcurFile]=useState("")
-    const [url,setUrl]=useState<string>()
-    const [run,setRun]=useState(false)
+
+
     
 
     const RootFolder:FileStructureType={
@@ -139,18 +139,18 @@ export default function Chat(){
         
     },[])
     
-    const file:any={};
+   
     
   
     const webContainer=useWebContainer()
     // console.log(FileParserhelper(globalFolderStructure,file))
     
-    useEffect(()=>{
-      const webconFiles=FileParserhelper(globalFolderStructure,file)
-      console.log(webconFiles)
-      webContainer?.mount(webconFiles)
+    // useEffect(()=>{
+    //   const webconFiles=FileParserhelper(globalFolderStructure,file)
+    //   console.log(webconFiles)
+    //   webContainer?.mount(webconFiles)
 
-    },[globalFolderStructure,webContainer])
+    // },[globalFolderStructure,webContainer])
 
     async function installDependencies(){
       
@@ -164,6 +164,8 @@ export default function Chat(){
           console.log(data);
         }
       }));
+
+      
       // installProcess2?.output.pipeTo(new WritableStream({
       //   write(data) {
       //     console.log(data);
@@ -180,10 +182,10 @@ export default function Chat(){
         
     }
 
-    useEffect(()=>{
-      installDependencies()
-      setRun(prev=>!prev)
-    },[webContainer,globalFolderStructure])
+    // useEffect(()=>{
+    //   installDependencies()
+
+    // },[webContainer,globalFolderStructure])
 
     
     
@@ -220,7 +222,7 @@ export default function Chat(){
               >
                 {/* <div className="bg-gray-200"> fileName</div>
                 <MonacoEditor key={curFile} value={codeEditor} filename={curFile}/> */}
-                <CodePreviewTabs curFile={curFile} codeEditor={codeEditor} webContainer={webContainer}/>
+                <CodePreviewTabs curFile={curFile} codeEditor={codeEditor} globalFolderStructure={globalFolderStructure} webContainer={webContainer}/>
                 
                 
               </ResizablePanel>
